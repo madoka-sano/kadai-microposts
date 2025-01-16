@@ -56,7 +56,7 @@ class User extends Authenticatable
      */
     public function loadRelationshipCounts()
     {
-        $this->loadCount('microposts');
+        $this->loadCount(['microposts', 'followings', 'followers']);
     }
     
     /**
@@ -125,10 +125,15 @@ class User extends Authenticatable
     }
     
     /**
-     * このユーザーに関係するモデルの件数をロードする。
+     * このユーザーとフォロー中ユーザーの投稿に絞り込む。
      */
-    public function loadRelationshipCounts()
+    public function feed_microposts()
     {
-        $this->loadCount(['microposts', 'followings', 'followers']);
+        // このユーザーがフォロー中のユーザーのidを取得して配列にする
+        $userIds = $this->followings()->pluck('users.id')->toArray();
+        // このユーザーのidもその配列に追加
+        $userIds[] = $this->id;
+        // それらのユーザーが所有する投稿に絞り込む
+        return Micropost::whereIn('user_id', $userIds);
     }
 }
