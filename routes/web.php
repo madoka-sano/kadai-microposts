@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController; // 追記
 use App\Http\Controllers\MicropostsController; //追記
 use App\Http\Controllers\UserFollowController;  // 追記
+use App\Http\Controllers\FavoritesController;  // 追記
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,12 @@ Route::get('/', [MicropostsController::class, 'index']);
 Route::get('/dashboard', [MicropostsController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    //お気に入り
+    Route::prefix('microposts/{id}')->group(function() {
+        Route::post('favorite', [FavoritesController::class, 'store'])->name('favorites.favorite');
+        Route::delete('unfavorite', [FavoritesController::class, 'destroy'])->name('favorites.unfavorite');
+        Route::get('favorites', [UsersController::class, 'favorites'])->name('favorites.favorites');
+    });
     // 追記ここから
     Route::prefix('users/{id}')->group(function () {
         Route::post('follow', [UserFollowController::class, 'store'])->name('user.follow');
