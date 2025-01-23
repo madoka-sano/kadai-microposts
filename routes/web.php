@@ -36,6 +36,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('unfollow', [UserFollowController::class, 'destroy'])->name('user.unfollow');
         Route::get('followings', [UsersController::class, 'followings'])->name('users.followings');
         Route::get('followers', [UsersController::class, 'followers'])->name('users.followers');
+        
+        Route::get('edit_profile', [UsersController::class, 'edit_profire'])->name('users.edit_profile');
+        Route::post('edit_profile', [UsersController::class, 'update_profire'])->name('users.update_profire');
     });
     // 追記きこまで
     Route::resource('users', UsersController::class, ['only' => ['index', 'show']]);

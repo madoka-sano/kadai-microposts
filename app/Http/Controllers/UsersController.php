@@ -111,4 +111,60 @@ class UsersController extends Controller
             'microposts' => $favorites,
         ]);
     }
+    
+    /**
+     * ユーザーのプロフィール編集ページを表示するアクション。
+     *
+     * @param  $id  ユーザーのid
+     * @return \Illuminate\Http\Response
+     */
+    public function edit_profire($id)
+    {
+        // idの値でユーザーを検索して取得
+        $user = User::findOrFail($id);
+        
+        // 関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        // ユーザーのプロフィールを取得
+        $profile = $user->profile;
+
+        // ユーザーのプロフィール編集ビューでそれらを表示
+        return view('users.edit_profile', [
+            'user' => $user,
+            'profile' => $profile,
+        ]);
+    }
+    
+    
+     /**
+     * ユーザーのプロフィール編集を保存するアクション。
+     *
+     * @param  $id  ユーザーのid
+     * @return \Illuminate\Http\Response
+     */
+    public function update_profire(Request $request, string $id)
+    {
+        // idの値でユーザーを検索して取得
+        $user = User::findOrFail($id);
+        
+        // 認証済みユーザー（閲覧者）がその投稿の所有者でない場合はトップページへ
+        if (\Auth::id() != $user->id) {
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
+        
+        // バリデーション
+        $request->validate([
+            'profile' => 'required|max:100',
+        ]);
+        
+        // プロフィールを更新
+        $user->profile = $request->profile;
+        $user->save();
+        
+        // 前のURLへリダイレクトさせる
+        return back();
+    }
+    
 }

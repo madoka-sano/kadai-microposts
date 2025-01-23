@@ -19,4 +19,11 @@
         Favorites
         <div class="badge badge-neutral ml-1">{{ $user->favorites_count }}</div>
     </a>
+    {{-- プロフィール変更タブ'user.edit_profile' --}}
+    @if (Auth::id() == $user->id)
+    <a href="{{ route('users.edit_profile', $user->id) }}" class="tab grow {{ Request::routeIs('users.edit_profile') ? 'tab-active' : '' }}">
+        Edit Profile
+        {{-- <div class="badge badge-neutral ml-1">{{ $user->favorites_count }}</div> --}}
+    </a>
+    @endif
 </div>
